@@ -1,7 +1,7 @@
 const app = require('./config/app')
 const http = require('http')
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8080;
 
 app.listen(port, function() {
     console.log(`Servidor subiu com sucesso!

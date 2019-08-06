@@ -15,6 +15,8 @@ module.exports = (app) => {
                         senha
                     })
                     .then((usuario) => {
+                        console.log(usuario);
+
                         if(!usuario) {
                             return next( new errors.NotFoundError('Usuario não encontrado') )
                         }
@@ -22,6 +24,7 @@ module.exports = (app) => {
                         res.status(200)
                         res.json({ token: token })    
                     })
+                    .catch(err => console.log(err))
             } 
 
             if(!jsonBody.login && !jsonBody.senha) {

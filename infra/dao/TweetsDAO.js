@@ -5,8 +5,6 @@ class TweetsDAO {
     constructor(app) {
         this.dbTweets = app.infra.config.db.tweets
         this.usuariosDAO = UsuariosDAO(app)
-
-        this.buscaUm = this.buscaUm.bind(this)
     }
 
     buscaTodos() {
@@ -20,13 +18,9 @@ class TweetsDAO {
         })
     }
 
-    buscaUm(idTweet, loginUsuario) {
+    buscaUm(idTweet) {
         return new Promise((resolve, reject) => {
-            let query;
-            if(loginUsuario) {
-                query = { _id: idTweet, "usuario.login": loginUsuario }    
-            }
-            query = { _id: idTweet }
+            const query = { _id: idTweet }
             this.dbTweets.findOne(query, (err, data) => {
                 if(err) {
                     reject(new errors.InternalServerError(err))
@@ -49,9 +43,9 @@ class TweetsDAO {
         })
     }
 
-    remover(tweetId, loginUsuario) {
+    remover(tweetId) {
         return new Promise((resolve,reject) => {
-            const query = { "_id": tweetId, "usuario.login": loginUsuario }
+            const query = { _id: tweetId }
             this.dbTweets.remove(query, {}, (err,data) => {
                 if(err) {
                     reject(new errors.InternalServerError(err))

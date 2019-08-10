@@ -9,14 +9,14 @@ function geraToken(login, senha, olderToken) {
     }
     const token = jwt.sign(
         loginToken,
-        process.env.JWTSECRET,
+        'TWITELUM',
         { expiresIn: moment().add(14, 'days').valueOf() }
     );
     return token
 }
 
 function decodificaToken(token) {
-    var tokenDecodificado = jwt.verify(token, process.env.JWTSECRET);
+    var tokenDecodificado = jwt.verify(token, 'TWITELUM');
     return tokenDecodificado
 }
 

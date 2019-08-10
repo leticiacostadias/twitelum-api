@@ -1,7 +1,8 @@
 const app = require('./config/app')
+const socket = require('./socket')
 const http = require('http')
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8080;
 
 app.listen(port, function() {
     console.log(`Servidor subiu com sucesso!
@@ -9,6 +10,7 @@ app.listen(port, function() {
     para visualizar acesse: http://localhost:${port}`)
 })
 
+socket.init()
 
 setInterval(() => {
     http.get('http://twitelum-api.herokuapp.com/')

@@ -1,11 +1,12 @@
 const errors = require('restify-errors');
+const { socketIo } = require('../socket')
 
 class TweetsController {
     constructor(app) {
         this.app = app
         this.tweetsDAO = this.app.infra.dao.TweetsDAO
         this.tweetsDTO = app.models.dto.TweetsDTO
-        
+
         // Class Methods
         this.listar = this.listar.bind(this)
         this.listarUm = this.listarUm.bind(this)
@@ -19,11 +20,11 @@ class TweetsController {
         this.tweetsDAO
             .buscaTodos()
             .then(tweets => {
-                if(req.login) {
+                if (req.login) {
                     return tweets.map((tweet) => {
                         console.log(tweet.usuario.login, req.login)
                         console.log(tweet.usuario.login === req.login)
-                        if(tweet.usuario.login === req.login) {
+                        if (tweet.usuario.login === req.login) {
                             tweet.removivel = true
                         }
                         const likeado = tweet.likes.find((like) => {
@@ -45,7 +46,7 @@ class TweetsController {
             })
     }
 
-    listarUm(req,res) {
+    listarUm(req, res) {
         const idTweet = req.params.id
         this.tweetsDAO
             .buscaUm(idTweet)
@@ -54,39 +55,44 @@ class TweetsController {
             })
     }
 
-    adicionar(req,res, next) {
+    adicionar(req, res, next) {
         // Pega o header e verifica se tem o token pra poder publicar
         const body = req.body
         const jsonBody = typeof req.body === 'object' ? req.body : JSON.parse(body)
-        console.log(req.login)
         const tweetObj = {
             login: req.login,
             conteudo: jsonBody.conteudo
         }
+
         try {
             this.tweetsDAO
                 .adicionar(this.tweetsDTO.toTweet(tweetObj))
                 .then((tweet) => {
-                    if(tweet.usuario.login === req.login) {
+                    socketIo.emit('newTweet', tweet);
+
+                    if (tweet.usuario.login === req.login) {
                         tweet.removivel = true
                     }
+
+                    socketIo.emit('newTweetId', tweet._id);
+
                     // Header location: /tweets/id
                     req.header('location', `/tweets/${tweet._id}`);
-                    res.status(201) 
+                    res.status(201)
                     res.json(tweet)
                 })
-                .catch( (err) => res.json(err) )
-        } catch(e) {
-            next( new errors.InvalidContentError(e.message) )
+                .catch((err) => res.json(err))
+        } catch (e) {
+            next(new errors.InvalidContentError(e.message))
         }
     }
 
-    deletar(req,res, next) {
+    deletar(req, res, next) {
         const tweetId = req.params.id
         this.tweetsDAO
             .remover(tweetId, req.login)
             .then((itensRemovidos) => {
-                res.status(201) 
+                res.status(201)
                 res.json({
                     removidos: itensRemovidos,
                     message: `Tweet com id: ${tweetId} foi removido com sucesso`
@@ -97,7 +103,7 @@ class TweetsController {
             })
     }
 
-    like(req,res, next) {
+    like(req, res, next) {
         const tweetInfo = {
             id: req.params.id,
             tweet: {

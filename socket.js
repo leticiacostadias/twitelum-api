@@ -1,7 +1,5 @@
 const socketIo = require('socket.io')()
 
-let socketClient;
-
 function init () {
     socketIo.on('connect', (client) => {
         console.log('new user connected');
@@ -13,7 +11,7 @@ function init () {
         socketClient = client;
     });
 
-    const port = 9090;
+    const port = 8080;
     socketIo.listen(port);
     console.log('listening on port ', port);
 }

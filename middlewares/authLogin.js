@@ -7,12 +7,12 @@ function geraToken(login, senha, olderToken) {
         login,
         senha
     }
-
-    console.log(loginToken);
-
-    const token = new Buffer(JSON.stringify(loginToken));
-    
-    return token.toString('base64');
+    const token = jwt.sign(
+        loginToken,
+        process.env.JWTSECRET,
+        { expiresIn: moment().add(14, 'days').valueOf() }
+    );
+    return token
 }
 
 function decodificaToken(token) {

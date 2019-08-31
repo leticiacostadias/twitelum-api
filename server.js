@@ -10,7 +10,7 @@ app.listen(port, function() {
     para visualizar acesse: http://localhost:${port}`)
 })
 
-socket.init()
+// socket.init()
 
 setInterval(() => {
     http.get('http://twitelum-api.herokuapp.com/')

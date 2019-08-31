@@ -1,5 +1,5 @@
 const errors = require('restify-errors');
-const { socketIo } = require('../socket')
+// const { socketIo } = require('../socket')
 
 class TweetsController {
     constructor(app) {
@@ -68,13 +68,13 @@ class TweetsController {
             this.tweetsDAO
                 .adicionar(this.tweetsDTO.toTweet(tweetObj))
                 .then((tweet) => {
-                    socketIo.emit('newTweet', tweet);
-
+                    // socketIo.emit('newTweet', tweet);
+                    console.log('teste');
                     if (tweet.usuario.login === req.login) {
                         tweet.removivel = true
                     }
 
-                    socketIo.emit('newTweetId', tweet._id);
+                    // socketIo.emit('newTweetId', tweet._id);
 
                     // Header location: /tweets/id
                     req.header('location', `/tweets/${tweet._id}`);
